@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoDB = require('mongodb')
 const mongoClient = require('mongodb').MongoClient
 
 const app = express()
@@ -13,8 +14,10 @@ mongoClient.connect(connectionString)
     const db = client.db('star-wars-quotes')
     const quoteCollections = db.collection('quotes')
 
-    // express now can handle req.body content
+    // express now can handle req.body, json and content and serve public files
     app.use(bodyParser.urlencoded({extended: true}))
+    app.use(express.static('public'))
+    app.use(bodyParser.json())
 
     // pug template engine integration
     app.set('view engine', 'pug')
@@ -24,10 +27,9 @@ mongoClient.connect(connectionString)
     })
 
     app.get('/', (req, res) => {
-        const cursor = db.collection('quotes').find().toArray()
+        db.collection('quotes').find().toArray()
         .then((result) => {
-            const resultArray = { result }
-            res.render(__dirname + '/index.pug', resultArray)
+            res.render(__dirname + '/index.pug', { result })
         })
         .catch((error) => console.log(error))
     })
@@ -37,6 +39,32 @@ mongoClient.connect(connectionString)
         .then((result) => console.log(result))
         .then(res.redirect('/'))
         .catch((error) => console.log(error))
+    })
+
+    app.put('/quote', (req, res) => {
+        quoteCollections.findOneAndUpdate({
+            _id: new mongoDB.ObjectId(req.body._id)}, {
+                $set: {
+                    name: req.body.name, 
+                    quote: req.body.quote
+                }
+            })
+        .then((result) => {
+            console.log(result)
+            res.end()
+        })
+        .catch((error) => console.log(error))
+    })
+
+    app.delete('/quote', (req, res) => {
+        quoteCollections.deleteOne({
+            _id: new mongoDB.ObjectId(req.body._id)
+        })
+        .then(result => {
+            console.log(result)
+            res.end()
+        })
+        .catch(error => console.log(error))
     })
 })
 .catch((error => console.log(error)))

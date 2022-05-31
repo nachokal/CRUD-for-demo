@@ -5,25 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    link(rel="stylesheet", href="/styles.css")
 </head>
 <body>
     <header>
-        <h1>Hello</h1>
+        <h1>Star Wars Quotes</h1>
     </header>
     <main>
         <section>
+            p Add Quotes from Star Wars
             <form action="/quote" method="post">
                 <input type="text" name="name" placeholder="name">
                 <input type="text" name="quote" placeholder="quote">
-                <button type="submit">Send</button>
+                <button type="submit">Save</button>
             </form>
         </section>
         section
             h2 Quotes 
             ul
                 each val in result
-                    li= val.name + ': ' + val.quote
+                    li= val.name + ': ' + val.quote + '.'
+                        button(type='button' class='editButton' _id=val._id) Edit
+                        button(type='button' class='deleteButton' _id=val._id) Delete
     </main>
-    
+    <script src="/main.js"></script>
 </body>
 </html>
