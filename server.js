@@ -36,8 +36,10 @@ mongoClient.connect(connectionString)
 
     app.post('/quote', (req, res) => {
         quoteCollections.insertOne(req.body)
-        .then((result) => console.log(result))
-        .then(res.redirect('/'))
+        .then((result) => {
+            console.log(result)
+            res.end()
+        })
         .catch((error) => console.log(error))
     })
 
